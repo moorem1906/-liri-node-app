@@ -2,7 +2,8 @@ require("dotenv").config();
 //OH SO MANY VAR's
 var keys = require("./keys.js");
 var request = require("request");
-var Spotify = require("node-spotify-api");
+// var spotify = require("node-spotify-api");
+var spotify = new Spotify(keys.spotify)
 var fs = require("fs");
 var moment = require("moment"); //This is for formating
 //VAR's for user action and inputs
@@ -36,10 +37,8 @@ function movie(inputs) {
     if (inputs === undefined) {
       inputs = "TESTING";
     }
-
-    //Shorthand for console logging the results
     var results = JSON.parse(body);      
-    //If no error than results are displayed
+    //The follwing results are displayed if there's no Error
     if (!error && response.statusCode === 200) {
       console.log("Title: " + results.Title);
       console.log("Release Year: " + results.Year);
@@ -55,9 +54,7 @@ function movie(inputs) {
 //Concert API call
 function concert(inputs) {
   var queryUrl =
-    "https://rest.bandsintown.com/artists/" +
-    inputs +
-    "/events?app_id=codingbootcamp";
+  "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
 
   request(queryUrl, function(error, response, body) {
     if (!inputs) {
@@ -70,15 +67,15 @@ function concert(inputs) {
       console.log("Venue Name: " + result.venue.name);
       //moment.js for formatting the date
       console.log(
-        "Date of Event: " + moment(result.datetime).format("YYYY/MM/DD")
+        "Event Date: " + moment(result.datetime).format("YYYY/MM/DD")
       );
     }
   });
 }
 //Function to read the random.txt file
 function doIt(inputs) {
-  fs.readFile("random.txt", "utf-8", function(err, buf) {
-    console.log(buf.toString());
+  fs.readFile("random.txt", "utf-8", function(err, response) {
+    console.log(response.toString());
   });
 }
 
@@ -95,7 +92,7 @@ function spotify(inputs) {
   }
   spotify.search({ type: "track", query: inputs }, function(err, data) {
     if (err) {
-      console.log("Error occurred: " + err);
+      console.log("Error detected: " + err);
       return;
     }
 
